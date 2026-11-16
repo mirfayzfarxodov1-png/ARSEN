@@ -51,7 +51,7 @@ A local knowledge base and a small local model do not know everything and can ma
 
 ## Chrome extension
 
-The extension supports explicit, user-clicked opening of these allowlisted sites: Instagram, YouTube, Google, Gmail, Roblox and GitHub. Type `open instagram` (or another listed site) and click **Ask ARSEN**. It opens a new tab. Other browser or computer actions are not enabled by this command handler.
+The extension supports user-triggered browser navigation and web search. It recognizes common site aliases (such as Instagram, YouTube, Roblox, GitHub, Discord and ChatGPT), explicit HTTPS/HTTP URLs and domain names, and natural-language site names (which are searched as official-site queries rather than guessed). Type `open instagram`, `open example.com`, `open Notion`, or `search for Roblox Studio tutorials`, then click **Ask ARSEN**. It opens a new tab. This is browser navigation only: it does not log in, submit forms, post content, send messages, or control the whole computer.
 
 1. Start ARSEN with `npm start`.
 2. Open `chrome://extensions` and enable Developer mode.
