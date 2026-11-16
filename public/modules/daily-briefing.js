@@ -48,6 +48,7 @@
   const toggle = $('#autoSpeak');
   if (toggle) toggle.checked = localStorage.getItem('arsen-auto-speak') === 'true';
   $('#briefingButton')?.addEventListener('click', () => { report(); });
+  $('#briefingSpeak')?.addEventListener('click', () => { const text = report(); if (!('speechSynthesis' in window)) return; window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); const lang = localStorage.getItem('arsen-language') || 'en'; utterance.lang = ({uz:'uz-UZ',en:'en-US',ru:'ru-RU',es:'es-ES',fr:'fr-FR',de:'de-DE'})[lang] || lang; const voices = window.speechSynthesis.getVoices(); const voice = voices.find(item => item.lang.toLowerCase() === utterance.lang.toLowerCase()) || voices.find(item => item.lang.toLowerCase().startsWith(lang)); if (voice) utterance.voice = voice; window.speechSynthesis.speak(utterance); });
   report();
   window.ARSENdailyBriefing = report;
 })();
