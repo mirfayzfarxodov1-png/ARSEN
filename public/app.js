@@ -65,9 +65,10 @@ $('#themeToggle').addEventListener('click',()=>document.body.classList.toggle('l
 $('#mobileMenu').addEventListener('click',()=>$('#sidebar').classList.toggle('open'));
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();newChat();}});
 async function checkHealth(){
- try{const r=await fetch('/api/health');const data=await r.json();$('#providerStatus').textContent=data.aiConfigured?t('providerReady'):t('providerMissing');$('#providerStatus').className='agent-status '+(data.aiConfigured?'connected':'planned');}
- catch{$('#providerStatus').textContent='OFFLINE';}
+ try{const r=await fetch('/api/health');const data=await r.json();$('#providerStatus').textContent=data.aiConfigured?t('providerReady'):t('providerMissing');$('#providerStatus').className='agent-status '+(data.aiConfigured?'connected':'planned');$('#statAI').textContent=data.aiConfigured?'READY':'OFF';$('#statAIHint').textContent=data.aiConfigured?'Provider connected':'Add server provider';$('#settingsProvider').textContent=data.aiConfigured?'AI provider is configured and ready.':'No AI provider is configured on the server yet.';$('#settingsProviderStatus').textContent=data.aiConfigured?'CONNECTED':'NOT CONFIGURED';}
+ catch{$('#providerStatus').textContent='OFFLINE';$('#statAI').textContent='OFFLINE';$('#statAIHint').textContent='Server unavailable';$('#settingsProvider').textContent='Could not reach the ARSEN server.';$('#settingsProviderStatus').textContent='OFFLINE';}
 }
+window.ARSENcheckHealth=checkHealth;
 let voices=[];
 function refreshVoices(){
  if(!('speechSynthesis'in window))return;
@@ -95,4 +96,6 @@ $('#voiceInput').addEventListener('click',()=>{
  recognition.onresult=e=>{$('#prompt').value=e.results[0][0].transcript;showView('chat');$('#prompt').focus();};
  recognition.onerror=()=>$('#voiceStatus').textContent=t('voiceUnsupported');recognition.start();
 });
-applyLanguage();checkHealth();setTimeout(()=>{if(!history.length)$('#hero').style.display='block';},50);
+applyLanguage();checkHealth();
+if(!localStorage.getItem('arsen-start-view')){showView('dashboard');localStorage.setItem('arsen-start-view','dashboard');}else{showView('dashboard');}
+setTimeout(()=>{if(!history.length)$('#hero').style.display='block';},50);
