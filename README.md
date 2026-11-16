@@ -9,14 +9,15 @@ ARSEN is a multilingual AI workspace with a motion-led interface, browser voice 
 
 ## Run locally
 
-```bash
-npm install
+```bat
 copy .env.example .env
 ```
 
-Set `AI_BASE_URL`, `AI_API_KEY` and `AI_MODEL` in `.env`. Keep credentials on the server. Then:
+The server now uses Node.js built-ins only, so no `npm install` is required to start it. (Running `npm install` is harmless but unnecessary.)
 
-```bash
+Set `AI_BASE_URL`, `AI_API_KEY` and `AI_MODEL` in `.env`. Keep credentials on the server. Then start it:
+
+```bat
 npm start
 ```
 
