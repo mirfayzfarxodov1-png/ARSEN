@@ -28,12 +28,20 @@ Open http://localhost:3000.
 - UI translations for English, Uzbek, Russian, Spanish, French and German.
 - ARGON V1 chat orchestration through a server-side OpenAI-compatible API.
 - Browser speech synthesis and speech recognition where supported by the browser/device.
+- Expanded command center dashboard with live workspace stats and recent activity.
+- Local project manager, task board, and searchable knowledge vault with export/import backups.
+- Workspace settings, provider health checks, and a one-click local data reset.
+- Installable PWA shell with offline access to the app interface (AI chat still requires a server connection).
 - Agent, Game Lab and Integrations workspaces with honest connection states.
 - Basic security headers, request size limits, bounded chat history and provider secrets kept server-side.
 
 ## Important capability boundaries
 
 ARGON V1 is an orchestration layer using a configured model provider; it is not a newly pretrained foundation model. The first release does not yet control the operating system, play Roblox/Minecraft, place social posts, or make phone calls. Those features require separate, permissioned integrations, local bridges, testing and user confirmation. The UI labels these modules as planned or not connected rather than pretending they work.
+
+## Local workspace data
+
+Projects, tasks and notes are stored in the browser's local storage on the current device. They are not synced to a server. Use Settings → Export workspace to create a JSON backup before clearing browser data or moving to another device.
 
 ## Configuration
 
