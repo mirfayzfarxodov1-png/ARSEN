@@ -1,0 +1,55 @@
+# ARSEN — ARGON V1
+
+ARSEN is a multilingual AI workspace with a motion-led interface, browser voice tools and a server-side AI gateway.
+
+## Requirements
+
+- Node.js 20+
+- An OpenAI-compatible chat-completions provider for AI chat
+
+## Run locally
+
+```bash
+npm install
+copy .env.example .env
+```
+
+Set `AI_BASE_URL`, `AI_API_KEY` and `AI_MODEL` in `.env`. Keep credentials on the server. Then:
+
+```bash
+npm start
+```
+
+Open http://localhost:3000.
+
+## Included in this first foundation
+
+- Animated, responsive dark interface with a light appearance toggle.
+- UI translations for English, Uzbek, Russian, Spanish, French and German.
+- ARGON V1 chat orchestration through a server-side OpenAI-compatible API.
+- Browser speech synthesis and speech recognition where supported by the browser/device.
+- Agent, Game Lab and Integrations workspaces with honest connection states.
+- Basic security headers, request size limits, bounded chat history and provider secrets kept server-side.
+
+## Important capability boundaries
+
+ARGON V1 is an orchestration layer using a configured model provider; it is not a newly pretrained foundation model. The first release does not yet control the operating system, play Roblox/Minecraft, place social posts, or make phone calls. Those features require separate, permissioned integrations, local bridges, testing and user confirmation. The UI labels these modules as planned or not connected rather than pretending they work.
+
+## Configuration
+
+See `.env.example`. Do not commit `.env` or publish API keys. The server exposes:
+
+- `GET /api/health` — readiness and configured-provider status.
+- `POST /api/chat` — validated chat messages sent to the configured model provider.
+
+## Validation
+
+`npm run check` checks JavaScript syntax. Use `npm start` and verify the health endpoint and chat with a valid provider configuration before deployment.
+
+## Roadmap
+
+1. Add automated tests and stronger deployment/rate-limit protections.
+2. Add a permissioned desktop companion with visible approvals and an emergency stop.
+3. Build a tested game-capture/input bridge for supported games.
+4. Add official social platform integrations with preview and confirmation.
+5. Add phone/communications integrations only through supported providers and explicit approval.
