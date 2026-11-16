@@ -1,13 +1,13 @@
 {
   "name": "arsen-argon-v1",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "ARSEN — multilingual AI workspace powered by the ARGON V1 orchestration core",
+  "description": "ARSEN — local-first assistant with ARGON V2 knowledge core and optional on-device language model",
   "type": "module",
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "check": "node --check server.js && node --check public/app.js && node --check chrome-extension/popup.js"
+    "check": "node --check server.js && node --check src/knowledge.js && node --check public/app.js && node --check chrome-extension/popup.js"
   },
   "engines": {
     "node": ">=20"
