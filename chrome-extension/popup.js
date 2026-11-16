@@ -27,7 +27,7 @@ function detectBrowserCommand(prompt) {
     { names: ['roblox'], url: 'https://www.roblox.com/', label: 'Roblox' },
     { names: ['github'], url: 'https://github.com/', label: 'GitHub' }
   ];
-  const match = value.match(/^(?:please\\s+)?(?:open|go to|visit|launch)\\s+(.+)$/i);
+  const match = value.match(/^(?:please\s+)?(?:open|go to|visit|launch)\s+(.+)$/i);
   if (!match) return null;
   const target = match[1].trim();
   return sites.find(site => site.names.includes(target)) || null;
