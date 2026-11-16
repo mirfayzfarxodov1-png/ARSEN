@@ -25,13 +25,13 @@ function parseBrowserCommand(prompt) {
   const value = String(prompt || '').trim().replace(/[.!?]+$/, '');
   if (!value) return null;
 
-  const search = value.match(/^(?:please\\s+)?(?:search(?:\\s+for)?|google|look\\s+up)\\s+(.+)$/i);
+  const search = value.match(/^(?:please\s+)?(?:search(?:\s+for)?|google|look\s+up)\s+(.+)$/i);
   if (search) {
     const query = search[1].trim();
     return query ? { kind: 'navigate', label: 'Search: ' + query, url: 'https://www.google.com/search?q=' + encodeURIComponent(query) } : null;
   }
 
-  const open = value.match(/^(?:please\\s+)?(?:open|go\\s+to|visit|launch|navigate\\s+to)\\s+(.+)$/i);
+  const open = value.match(/^(?:please\s+)?(?:open|go\s+to|visit|launch|navigate\s+to)\s+(.+)$/i);
   if (!open) return null;
   let target = open[1].trim().replace(/^["']|["']$/g, '');
   if (!target) return null;
@@ -64,15 +64,15 @@ function parseBrowserCommand(prompt) {
     linkedin: 'https://www.linkedin.com/',
     amazon: 'https://www.amazon.com/'
   };
-  const key = target.toLowerCase().replace(/^www\\./, '');
+  const key = target.toLowerCase().replace(/^www\./, '');
   if (aliases[key]) return { kind: 'navigate', label: target, url: aliases[key] };
 
   // Accept an explicit web URL or domain, but reject credentials and non-web protocols.
   let candidate = target;
-  if (!/^[a-z][a-z0-9+.-]*:\\/\\//i.test(candidate) && /^[a-z0-9-]+(?:\\.[a-z0-9-]+)+(?:[/:?#].*)?$/i.test(candidate)) {
+  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(candidate) && /^[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:[/:?#].*)?$/i.test(candidate)) {
     candidate = 'https://' + candidate;
   }
-  if (/^https?:\\/\\//i.test(candidate)) {
+  if (/^https?:\/\//i.test(candidate)) {
     try {
       const url = new URL(candidate);
       if (!url.hostname.includes('.') || url.username || url.password) return null;
