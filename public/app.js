@@ -75,7 +75,7 @@ function refreshVoices(){
  voices=window.speechSynthesis.getVoices();
  const select=$('#voiceSelect');const old=select.value;select.replaceChildren();
  const fallback=document.createElement('option');fallback.value='';fallback.textContent=t('defaultVoice');select.append(fallback);
- const prefix=language==='uz'?'uz':language;
+ const prefix='en';
  voices.filter(v=>v.lang.toLowerCase().startsWith(prefix)).forEach(v=>{const option=document.createElement('option');option.value=v.name;option.textContent=v.name+' · '+v.lang;select.append(option);});
  if(old)select.value=old;
 }
@@ -83,8 +83,8 @@ if('speechSynthesis'in window)window.speechSynthesis.onvoiceschanged=refreshVoic
 $('#speakButton').addEventListener('click',()=>{
  const text=$('#speechText').value.trim();if(!text){$('#voiceStatus').textContent=t('emptyVoice');return;}
  if(!('speechSynthesis'in window)){ $('#voiceStatus').textContent='Speech synthesis is not supported.';return;}
- window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang=langCode[language]||language;
- const chosen=voices.find(v=>v.name===$('#voiceSelect').value);if(chosen)utterance.voice=chosen;
+ window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang='en-US';
+ const chosen=voices.find(v=>v.name===$('#voiceSelect').value)||voices.find(v=>v.lang.toLowerCase().startsWith('en-us'))||voices.find(v=>v.lang.toLowerCase().startsWith('en'));if(chosen)utterance.voice=chosen;
  utterance.onstart=()=>$('#voiceStatus').textContent=t('voiceStarted');utterance.onend=()=>$('#voiceStatus').textContent=t('voiceReady');utterance.onerror=()=>$('#voiceStatus').textContent=t('voiceReady');window.speechSynthesis.speak(utterance);
 });
 $('#stopSpeak').addEventListener('click',()=>{if('speechSynthesis'in window)window.speechSynthesis.cancel();$('#voiceStatus').textContent=t('voiceStopped');});
