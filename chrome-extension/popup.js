@@ -17,9 +17,42 @@ async function checkServer() {
   }
 }
 
+function detectBrowserCommand(prompt) {
+  const value = prompt.trim().toLowerCase().replace(/[.!?]+$/,'');
+  const sites = [
+    { names: ['instagram','insta'], url: 'https://www.instagram.com/', label: 'Instagram' },
+    { names: ['youtube'], url: 'https://www.youtube.com/', label: 'YouTube' },
+    { names: ['google'], url: 'https://www.google.com/', label: 'Google' },
+    { names: ['gmail'], url: 'https://mail.google.com/', label: 'Gmail' },
+    { names: ['roblox'], url: 'https://www.roblox.com/', label: 'Roblox' },
+    { names: ['github'], url: 'https://github.com/', label: 'GitHub' }
+  ];
+  const match = value.match(/^(?:please\\s+)?(?:open|go to|visit|launch)\\s+(.+)$/i);
+  if (!match) return null;
+  const target = match[1].trim();
+  return sites.find(site => site.names.includes(target)) || null;
+}
+
 $('#ask').addEventListener('click', async () => {
   const prompt = $('#prompt').value.trim();
   if (!prompt) return;
+  const browserCommand = detectBrowserCommand(prompt);
+  if (browserCommand) {
+    $('#ask').disabled = true;
+    try {
+      await chrome.tabs.create({ url: browserCommand.url, active: true });
+      lastAnswer = 'Opened ' + browserCommand.label + ' in a new tab.';
+      $('#answer').textContent = lastAnswer;
+      $('#answer-wrap').hidden = false;
+      $('#message').textContent = 'Browser action completed. ARSEN opened the requested site.';
+    } catch (error) {
+      $('#message').textContent = 'Could not open the site: ' + error.message;
+      $('#message').classList.add('error');
+    } finally {
+      $('#ask').disabled = false;
+    }
+    return;
+  }
   $('#ask').disabled = true;
   $('#message').classList.remove('error');
   $('#message').textContent = 'ARGON is thinking…';
