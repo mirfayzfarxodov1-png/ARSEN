@@ -1,79 +1,66 @@
-# ARSEN — ARGON V1
+ # ARSEN — ARGON V2 LOCAL
 
-ARSEN is a multilingual AI workspace with a motion-led interface, browser voice tools and a server-side AI gateway.
+ARSEN is a local-first assistant. It never connects to OpenAI, Claude, Groq or another hosted AI provider. Its built-in multilingual knowledge core works without an API key. If Ollama is installed on the same computer and the selected model is available, ARSEN uses that on-device model for broader open-ended answers.
 
 ## Requirements
 
 - Node.js 20+
-- An OpenAI-compatible chat-completions provider for AI chat
+- Windows, macOS or Linux
+- Optional: Ollama and a locally downloaded model
 
-## Run locally
-
-```bat
-copy .env.example .env
-```
-
-The server now uses Node.js built-ins only, so no `npm install` is required to start it. (Running `npm install` is harmless but unnecessary.)
-
-Set `AI_BASE_URL`, `AI_API_KEY` and `AI_MODEL` in `.env`. Keep credentials on the server. Then start it:
+## Run ARSEN
 
 ```bat
+cd /d "C:\\Users\\LENOVA MIRFAYZ\\Desktop\\ARSEN"
+git pull origin main
+npm run check
 npm start
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3000. No `npm install`, cloud account, API key or `.env` file is required for the built-in core.
 
-## Included in this first foundation
+## Optional local language model (Ollama)
 
-- Animated, responsive dark interface with a light appearance toggle.
-- UI translations for English, Uzbek, Russian, Spanish, French and German.
-- ARGON V1 chat orchestration through a server-side OpenAI-compatible API.
-- Browser speech synthesis and speech recognition where supported by the browser/device.
-- Expanded command center dashboard with live workspace stats and recent activity.
-- Local project manager, task board, and searchable knowledge vault with export/import backups.
-- Workspace settings, provider health checks, and a one-click local data reset.
-- Installable PWA shell with offline access to the app interface (AI chat still requires a server connection).
-- Agent, Game Lab and Integrations workspaces with honest connection states.
-- Basic security headers, request size limits, bounded chat history and provider secrets kept server-side.
+1. Install Ollama from its official website: https://ollama.com/download
+2. Open CMD and download a small model:
 
-## Important capability boundaries
+```bat
+ollama pull qwen2.5:0.5b
+```
 
-ARGON V1 is an orchestration layer using a configured model provider; it is not a newly pretrained foundation model. The first release does not yet control the operating system, play Roblox/Minecraft, place social posts, or make phone calls. Those features require separate, permissioned integrations, local bridges, testing and user confirmation. The UI labels these modules as planned or not connected rather than pretending they work.
+3. Keep Ollama running, then restart ARSEN with `npm start`.
+4. ARSEN checks `http://127.0.0.1:11434` and uses `qwen2.5:0.5b` when available. No API key is used. If Ollama or the model is unavailable, the built-in knowledge core still answers supported topics.
 
-## Local workspace data
+To choose another model, edit `.env` (copy `.env.example` first) and set `LOCAL_MODEL_NAME` to the exact installed model tag. `LOCAL_MODEL_URL` defaults to the local Ollama address.
 
-Projects, tasks and notes are stored in the browser's local storage on the current device. They are not synced to a server. Use Settings → Export workspace to create a JSON backup before clearing browser data or moving to another device.
+**Performance note:** Small local models can still be slow on older computers and may give weaker answers, especially in Uzbek. Start with the 0.5B model; do not download a large model on a low-memory computer. Model quality and speed depend on RAM, CPU and available disk space.
 
-## Configuration
+## Included
 
-See `.env.example`. Do not commit `.env` or publish API keys. The server exposes:
+- ARGON V2 local-first chat orchestration.
+- Built-in knowledge core with Uzbek, English and Russian explanations across programming, Roblox Studio, Windows, hardware, networking, AI, mathematics and study skills.
+- Basic arithmetic and local greetings without a language model.
+- Optional on-device Ollama model for broader generation.
+- English-first browser text-to-speech; voice availability depends on Windows and Chrome.
+- Local Chrome extension at `chrome-extension/`.
+- Existing projects, tasks, knowledge vault and workspace tools.
 
-- `GET /api/health` — readiness and configured-provider status.
-- `POST /api/chat` — validated chat messages sent to the configured model provider.
+## Honest capability boundaries
 
-## Validation
+A local knowledge base and a small local model do not know everything and can make mistakes. Add trusted documents and topic-specific knowledge to improve coverage. ARSEN does not silently control the whole computer, submit forms, publish content or send messages. Those actions require separate integrations, visible permission and confirmation. The Chrome extension only sends prompts to the local ARSEN server and inserts a reviewed answer into a focused text field when you click its insert button.
 
-`npm run check` checks JavaScript syntax. Use `npm start` and verify the health endpoint and chat with a valid provider configuration before deployment.
+## Chrome extension
 
-## Roadmap
+1. Start ARSEN with `npm start`.
+2. Open `chrome://extensions` and enable Developer mode.
+3. Choose **Load unpacked** and select the repository's `chrome-extension` folder (not the root ARSEN folder).
+4. Open the ARSEN extension. It talks only to `http://localhost:3000`.
 
-1. Add automated tests and stronger deployment/rate-limit protections.
-2. Add a permissioned desktop companion with visible approvals and an emergency stop.
-3. Build a tested game-capture/input bridge for supported games.
-4. Add official social platform integrations with preview and confirmation.
-5. Add phone/communications integrations only through supported providers and explicit approval.
+## Local endpoints
 
+- `GET /api/health` — reports built-in core and local model status.
+- `POST /api/chat` — uses the local model if installed, otherwise the built-in knowledge engine.
 
-## ARSEN in Chrome (local companion)
+## Security
 
-1. Start the ARSEN server with `npm start`.
-2. In Chrome, open `chrome://extensions`.
-3. Turn on **Developer mode**.
-4. Choose **Load unpacked** and select this repository's `chrome-extension` folder.
-5. Open the ARSEN extension from the Extensions menu.
-
-The extension sends chat requests only to the local ARSEN server at `http://localhost:3000`. It can insert the generated response into the currently focused text field only after you press **Insert into focused page field**. It does not submit forms, click page controls, read page contents, or operate the computer in the background.
-
-## English voice
-
-Voice Studio now prefers available English system voices (en-US first). The actual voice quality and available voices depend on Windows and the browser. Add/install an English speech voice in Windows language/speech settings if Chrome has none available.
+No external AI provider is configured. Keep the local server bound to localhost. Do not expose it publicly without authentication and additional protections.
