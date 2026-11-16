@@ -17,48 +17,104 @@ async function checkServer() {
   }
 }
 
-function detectBrowserCommand(prompt) {
-  const value = prompt.trim().toLowerCase().replace(/[.!?]+$/,'');
-  const sites = [
-    { names: ['instagram','insta'], url: 'https://www.instagram.com/', label: 'Instagram' },
-    { names: ['youtube'], url: 'https://www.youtube.com/', label: 'YouTube' },
-    { names: ['google'], url: 'https://www.google.com/', label: 'Google' },
-    { names: ['gmail'], url: 'https://mail.google.com/', label: 'Gmail' },
-    { names: ['roblox'], url: 'https://www.roblox.com/', label: 'Roblox' },
-    { names: ['github'], url: 'https://github.com/', label: 'GitHub' }
-  ];
-  const match = value.match(/^(?:please\s+)?(?:open|go to|visit|launch)\s+(.+)$/i);
-  if (!match) return null;
-  const target = match[1].trim();
-  return sites.find(site => site.names.includes(target)) || null;
+/**
+ * Browser actions are deliberately limited to navigation and search.
+ * They never submit forms, post content, access accounts, or execute page code.
+ */
+function parseBrowserCommand(prompt) {
+  const value = String(prompt || '').trim().replace(/[.!?]+$/, '');
+  if (!value) return null;
+
+  const search = value.match(/^(?:please\\s+)?(?:search(?:\\s+for)?|google|look\\s+up)\\s+(.+)$/i);
+  if (search) {
+    const query = search[1].trim();
+    return query ? { kind: 'navigate', label: 'Search: ' + query, url: 'https://www.google.com/search?q=' + encodeURIComponent(query) } : null;
+  }
+
+  const open = value.match(/^(?:please\\s+)?(?:open|go\\s+to|visit|launch|navigate\\s+to)\\s+(.+)$/i);
+  if (!open) return null;
+  let target = open[1].trim().replace(/^["']|["']$/g, '');
+  if (!target) return null;
+
+  const aliases = {
+    insta: 'https://www.instagram.com/',
+    instagram: 'https://www.instagram.com/',
+    youtube: 'https://www.youtube.com/',
+    google: 'https://www.google.com/',
+    gmail: 'https://mail.google.com/',
+    roblox: 'https://www.roblox.com/',
+    github: 'https://github.com/',
+    wikipedia: 'https://www.wikipedia.org/',
+    reddit: 'https://www.reddit.com/',
+    discord: 'https://discord.com/app',
+    tiktok: 'https://www.tiktok.com/',
+    facebook: 'https://www.facebook.com/',
+    x: 'https://x.com/',
+    twitter: 'https://x.com/',
+    chatgpt: 'https://chatgpt.com/',
+    whatsapp: 'https://web.whatsapp.com/',
+    maps: 'https://maps.google.com/',
+    drive: 'https://drive.google.com/',
+    docs: 'https://docs.google.com/',
+    notion: 'https://www.notion.so/',
+    canva: 'https://www.canva.com/',
+    spotify: 'https://open.spotify.com/',
+    twitch: 'https://www.twitch.tv/',
+    pinterest: 'https://www.pinterest.com/',
+    linkedin: 'https://www.linkedin.com/',
+    amazon: 'https://www.amazon.com/'
+  };
+  const key = target.toLowerCase().replace(/^www\\./, '');
+  if (aliases[key]) return { kind: 'navigate', label: target, url: aliases[key] };
+
+  // Accept an explicit web URL or domain, but reject credentials and non-web protocols.
+  let candidate = target;
+  if (!/^[a-z][a-z0-9+.-]*:\\/\\//i.test(candidate) && /^[a-z0-9-]+(?:\\.[a-z0-9-]+)+(?:[/:?#].*)?$/i.test(candidate)) {
+    candidate = 'https://' + candidate;
+  }
+  if (/^https?:\\/\\//i.test(candidate)) {
+    try {
+      const url = new URL(candidate);
+      if (!url.hostname.includes('.') || url.username || url.password) return null;
+      return { kind: 'navigate', label: url.hostname, url: url.href };
+    } catch { return null; }
+  }
+
+  // A natural-language site name is searched rather than guessed as an unsafe domain.
+  return {
+    kind: 'navigate',
+    label: 'Find official website: ' + target,
+    url: 'https://www.google.com/search?q=' + encodeURIComponent(target + ' official website')
+  };
+}
+
+async function runBrowserCommand(command) {
+  if (!command || command.kind !== 'navigate') return false;
+  await chrome.tabs.create({ url: command.url, active: true });
+  lastAnswer = 'Opened ' + command.label + '.';
+  $('#answer').textContent = lastAnswer;
+  $('#answer-wrap').hidden = false;
+  $('#message').textContent = 'Browser navigation completed.';
+  return true;
 }
 
 $('#ask').addEventListener('click', async () => {
   const prompt = $('#prompt').value.trim();
   if (!prompt) return;
-  const browserCommand = detectBrowserCommand(prompt);
-  if (browserCommand) {
-    $('#ask').disabled = true;
-    try {
-      await chrome.tabs.create({ url: browserCommand.url, active: true });
-      lastAnswer = 'Opened ' + browserCommand.label + ' in a new tab.';
-      $('#answer').textContent = lastAnswer;
-      $('#answer-wrap').hidden = false;
-      $('#message').textContent = 'Browser action completed. ARSEN opened the requested site.';
-    } catch (error) {
-      $('#message').textContent = 'Could not open the site: ' + error.message;
-      $('#message').classList.add('error');
-    } finally {
-      $('#ask').disabled = false;
-    }
-    return;
-  }
   $('#ask').disabled = true;
   $('#message').classList.remove('error');
-  $('#message').textContent = 'ARGON is thinking…';
   $('#answer-wrap').hidden = true;
-  conversation.push({ role: 'user', content: prompt });
+
   try {
+    const browserCommand = parseBrowserCommand(prompt);
+    if (browserCommand) {
+      $('#message').textContent = 'Opening requested page…';
+      await runBrowserCommand(browserCommand);
+      return;
+    }
+
+    $('#message').textContent = 'ARGON is thinking…';
+    conversation.push({ role: 'user', content: prompt });
     const response = await fetch(API + '/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -72,8 +128,8 @@ $('#ask').addEventListener('click', async () => {
     $('#answer-wrap').hidden = false;
     $('#message').textContent = 'Response ready. Review it, then choose whether to insert it.';
   } catch (error) {
-    conversation.pop();
-    $('#message').textContent = error.message;
+    if (conversation.at(-1)?.role === 'user') conversation.pop();
+    $('#message').textContent = 'Could not complete the request: ' + error.message;
     $('#message').classList.add('error');
   } finally {
     $('#ask').disabled = false;
