@@ -48,7 +48,7 @@ async function sendMessage(text) {
     const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history,language})});
     const data=await response.json();
     if(!response.ok) throw new Error(data.error || t('chatError'));
-    output.textContent=data.answer;history.push({role:'assistant',content:data.answer});
+    output.textContent=data.answer;history.push({role:'assistant',content:data.answer});window.dispatchEvent(new CustomEvent('arsen:activity',{detail:{type:'chat',title:content}}));if(localStorage.getItem('arsen-auto-speak')==='true')speakText(data.answer);
   } catch(error) {
     output.textContent=error.message || t('chatError');
     if(history.at(-1)?.role==='user') history.pop();
@@ -70,12 +70,13 @@ async function checkHealth(){
 }
 window.ARSENcheckHealth=checkHealth;
 let voices=[];
+function speakText(text){if(!('speechSynthesis'in window)||!text)return false;window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(String(text).slice(0,5000));utterance.lang=langCode[language]||language;const prefix=utterance.lang.toLowerCase();const chosen=voices.find(v=>v.lang.toLowerCase()===prefix)||voices.find(v=>v.lang.toLowerCase().startsWith(prefix.slice(0,2)));if(chosen)utterance.voice=chosen;window.speechSynthesis.speak(utterance);return true;}
 function refreshVoices(){
  if(!('speechSynthesis'in window))return;
  voices=window.speechSynthesis.getVoices();
  const select=$('#voiceSelect');const old=select.value;select.replaceChildren();
  const fallback=document.createElement('option');fallback.value='';fallback.textContent=t('defaultVoice');select.append(fallback);
- const prefix='en';
+ const prefix=langCode[language]||language;
  voices.filter(v=>v.lang.toLowerCase().startsWith(prefix)).forEach(v=>{const option=document.createElement('option');option.value=v.name;option.textContent=v.name+' · '+v.lang;select.append(option);});
  if(old)select.value=old;
 }
@@ -83,8 +84,8 @@ if('speechSynthesis'in window)window.speechSynthesis.onvoiceschanged=refreshVoic
 $('#speakButton').addEventListener('click',()=>{
  const text=$('#speechText').value.trim();if(!text){$('#voiceStatus').textContent=t('emptyVoice');return;}
  if(!('speechSynthesis'in window)){ $('#voiceStatus').textContent='Speech synthesis is not supported.';return;}
- window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang='en-US';
- const chosen=voices.find(v=>v.name===$('#voiceSelect').value)||voices.find(v=>v.lang.toLowerCase().startsWith('en-us'))||voices.find(v=>v.lang.toLowerCase().startsWith('en'));if(chosen)utterance.voice=chosen;
+ window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang=langCode[language]||language;
+ const prefix=utterance.lang.toLowerCase();const chosen=voices.find(v=>v.name===$('#voiceSelect').value)||voices.find(v=>v.lang.toLowerCase()===prefix)||voices.find(v=>v.lang.toLowerCase().startsWith(prefix.slice(0,2)));if(chosen)utterance.voice=chosen;
  utterance.onstart=()=>$('#voiceStatus').textContent=t('voiceStarted');utterance.onend=()=>$('#voiceStatus').textContent=t('voiceReady');utterance.onerror=()=>$('#voiceStatus').textContent=t('voiceReady');window.speechSynthesis.speak(utterance);
 });
 $('#stopSpeak').addEventListener('click',()=>{if('speechSynthesis'in window)window.speechSynthesis.cancel();$('#voiceStatus').textContent=t('voiceStopped');});
