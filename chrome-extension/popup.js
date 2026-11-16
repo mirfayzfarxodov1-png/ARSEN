@@ -1,3 +1,5 @@
+import { parseBrowserCommand } from './command-parser.js';
+
 const $ = selector => document.querySelector(selector);
 const API = 'http://localhost:3000';
 let lastAnswer = '';
@@ -17,81 +19,16 @@ async function checkServer() {
   }
 }
 
-/**
- * Browser actions are deliberately limited to navigation and search.
- * They never submit forms, post content, access accounts, or execute page code.
- */
-function parseBrowserCommand(prompt) {
-  const value = String(prompt || '').trim().replace(/[.!?]+$/, '');
-  if (!value) return null;
-
-  const search = value.match(/^(?:please\s+)?(?:search(?:\s+for)?|google|look\s+up)\s+(.+)$/i);
-  if (search) {
-    const query = search[1].trim();
-    return query ? { kind: 'navigate', label: 'Search: ' + query, url: 'https://www.google.com/search?q=' + encodeURIComponent(query) } : null;
-  }
-
-  const open = value.match(/^(?:please\s+)?(?:open|go\s+to|visit|launch|navigate\s+to)\s+(.+)$/i);
-  if (!open) return null;
-  let target = open[1].trim().replace(/^["']|["']$/g, '');
-  if (!target) return null;
-
-  const aliases = {
-    insta: 'https://www.instagram.com/',
-    instagram: 'https://www.instagram.com/',
-    youtube: 'https://www.youtube.com/',
-    google: 'https://www.google.com/',
-    gmail: 'https://mail.google.com/',
-    roblox: 'https://www.roblox.com/',
-    github: 'https://github.com/',
-    wikipedia: 'https://www.wikipedia.org/',
-    reddit: 'https://www.reddit.com/',
-    discord: 'https://discord.com/app',
-    tiktok: 'https://www.tiktok.com/',
-    facebook: 'https://www.facebook.com/',
-    x: 'https://x.com/',
-    twitter: 'https://x.com/',
-    chatgpt: 'https://chatgpt.com/',
-    whatsapp: 'https://web.whatsapp.com/',
-    maps: 'https://maps.google.com/',
-    drive: 'https://drive.google.com/',
-    docs: 'https://docs.google.com/',
-    notion: 'https://www.notion.so/',
-    canva: 'https://www.canva.com/',
-    spotify: 'https://open.spotify.com/',
-    twitch: 'https://www.twitch.tv/',
-    pinterest: 'https://www.pinterest.com/',
-    linkedin: 'https://www.linkedin.com/',
-    amazon: 'https://www.amazon.com/'
-  };
-  const key = target.toLowerCase().replace(/^www\./, '');
-  if (aliases[key]) return { kind: 'navigate', label: target, url: aliases[key] };
-
-  // Accept an explicit web URL or domain, but reject credentials and non-web protocols.
-  let candidate = target;
-  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(candidate) && /^[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:[/:?#].*)?$/i.test(candidate)) {
-    candidate = 'https://' + candidate;
-  }
-  if (/^https?:\/\//i.test(candidate)) {
-    try {
-      const url = new URL(candidate);
-      if (!url.hostname.includes('.') || url.username || url.password) return null;
-      return { kind: 'navigate', label: url.hostname, url: url.href };
-    } catch { return null; }
-  }
-
-  // A natural-language site name is searched rather than guessed as an unsafe domain.
-  return {
-    kind: 'navigate',
-    label: 'Find official website: ' + target,
-    url: 'https://www.google.com/search?q=' + encodeURIComponent(target + ' official website')
-  };
-}
-
 async function runBrowserCommand(command) {
-  if (!command || command.kind !== 'navigate') return false;
+  if (!command) return false;
+  if (command.kind === 'needs_target') {
+    $('#message').textContent = command.notice;
+    $('#message').classList.add('error');
+    return true;
+  }
+  if (command.kind !== 'navigate') return false;
   await chrome.tabs.create({ url: command.url, active: true });
-  lastAnswer = 'Opened ' + command.label + '.';
+  lastAnswer = command.notice || ('Opened ' + command.label + '.');
   $('#answer').textContent = lastAnswer;
   $('#answer-wrap').hidden = false;
   $('#message').textContent = 'Browser navigation completed.';
