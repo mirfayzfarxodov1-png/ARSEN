@@ -41,13 +41,14 @@ To choose another model, edit `.env` (copy `.env.example` first) and set `LOCAL_
 - Built-in knowledge core with Uzbek, English and Russian explanations across programming, Roblox Studio, Windows, hardware, networking, AI, mathematics and study skills.
 - Basic arithmetic and local greetings without a language model.
 - Optional on-device Ollama model for broader generation.
-- English-first browser text-to-speech; voice availability depends on Windows and Chrome.
+- Browser text-to-speech for selected language, with opt-in automatic reading of ARSEN replies.
+- Daily briefing from locally saved tasks, projects, notes and activity; click to hear the report.
 - Local Chrome extension at `chrome-extension/`.
 - Existing projects, tasks, knowledge vault and workspace tools.
 
 ## Honest capability boundaries
 
-A local knowledge base and a small local model do not know everything and can make mistakes. Add trusted documents and topic-specific knowledge to improve coverage. ARSEN does not silently control the whole computer, submit forms, publish content or send messages. Those actions require separate integrations, visible permission and confirmation. The Chrome extension only sends prompts to the local ARSEN server and inserts a reviewed answer into a focused text field when you click its insert button.
+A local knowledge base and a small local model do not know everything and can make mistakes. Add trusted documents and topic-specific knowledge to improve coverage. The daily briefing summarizes workspace data saved in this browser; it is not a full device-wide activity recorder. Automatic reply speech is off until enabled with the VOICE toggle. ARSEN does not silently control the whole computer, submit forms, publish content or send messages. Those actions require separate integrations, visible permission and confirmation. The Chrome extension only sends prompts to the local ARSEN server and inserts a reviewed answer into a focused text field when you click its insert button.
 
 ## Chrome extension
 
