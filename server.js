@@ -6,10 +6,6 @@ import { answerFromKnowledge } from './src/knowledge.js';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(ROOT, 'public');
-const LOCAL_MODEL_URL = (process.env.LOCAL_MODEL_URL || 'http://127.0.0.1:11434').replace(/\/$/, '');
-const LOCAL_MODEL_NAME = process.env.LOCAL_MODEL_NAME || 'qwen2.5:0.5b';
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '').split(',').map(v => v.trim()).filter(Boolean);
-
 async function loadEnv() {
   try {
     const source = await readFile(path.join(ROOT, '.env'), 'utf8');
@@ -26,6 +22,9 @@ async function loadEnv() {
 await loadEnv();
 
 const PORT = Number(process.env.PORT || 3000);
+const LOCAL_MODEL_URL = (process.env.LOCAL_MODEL_URL || 'http://127.0.0.1:11434').replace(/\\/$/, '');
+const LOCAL_MODEL_NAME = process.env.LOCAL_MODEL_NAME || 'qwen2.5:0.5b';
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '').split(',').map(v => v.trim()).filter(Boolean);
 const systemPrompt = 'You are ARSEN, a helpful local-first assistant. Answer in the user selected language. Be accurate, explain uncertainty, and never claim to perform an action unless a connected tool confirms it. Do not request passwords, API keys, or private credentials.';
 
 function sendJson(res, status, data) {
