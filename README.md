@@ -62,3 +62,18 @@ See `.env.example`. Do not commit `.env` or publish API keys. The server exposes
 3. Build a tested game-capture/input bridge for supported games.
 4. Add official social platform integrations with preview and confirmation.
 5. Add phone/communications integrations only through supported providers and explicit approval.
+
+
+## ARSEN in Chrome (local companion)
+
+1. Start the ARSEN server with `npm start`.
+2. In Chrome, open `chrome://extensions`.
+3. Turn on **Developer mode**.
+4. Choose **Load unpacked** and select this repository's `chrome-extension` folder.
+5. Open the ARSEN extension from the Extensions menu.
+
+The extension sends chat requests only to the local ARSEN server at `http://localhost:3000`. It can insert the generated response into the currently focused text field only after you press **Insert into focused page field**. It does not submit forms, click page controls, read page contents, or operate the computer in the background.
+
+## English voice
+
+Voice Studio now prefers available English system voices (en-US first). The actual voice quality and available voices depend on Windows and the browser. Add/install an English speech voice in Windows language/speech settings if Chrome has none available.
