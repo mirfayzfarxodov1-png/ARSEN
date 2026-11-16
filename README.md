@@ -1,4 +1,4 @@
- # ARSEN — ARGON V2 LOCAL
+# ARSEN — ARGON V2 LOCAL
 
 ARSEN is a local-first assistant. It never connects to OpenAI, Claude, Groq or another hosted AI provider. Its built-in multilingual knowledge core works without an API key. If Ollama is installed on the same computer and the selected model is available, ARSEN uses that on-device model for broader open-ended answers.
 
