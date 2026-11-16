@@ -7,9 +7,9 @@ async function checkServer() {
   try {
     const response = await fetch(API + '/api/health');
     const data = await response.json();
-    $('#status').textContent = data.aiConfigured ? 'AI READY' : 'AI NOT SET';
-    $('#status').style.color = data.aiConfigured ? '#7ce0b0' : '#e9b86a';
-    if (!data.aiConfigured) $('#message').textContent = 'ARSEN server is online, but its AI provider is not configured yet.';
+    $('#status').textContent = data.localModelAvailable ? 'LOCAL MODEL READY' : data.localCoreReady ? 'LOCAL CORE READY' : 'CORE OFFLINE';
+    $('#status').style.color = data.localCoreReady ? '#7ce0b0' : '#e9b86a';
+    if (data.localCoreReady) $('#message').textContent = data.localModelAvailable ? 'On-device model is ready. No cloud AI is connected.' : 'Built-in knowledge is ready. A local model can be added for broader answers.';
   } catch {
     $('#status').textContent = 'OFFLINE';
     $('#message').textContent = 'Start ARSEN on this computer first: npm start';
