@@ -7,20 +7,20 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <header><div class="mark">A</div><div><strong>ARSEN</strong><small>IN CHROME · ARGON V1</small></div><span id="status" class="status">CHECKING</span></header>
+  <header><div class="mark">A</div><div><strong>ARSEN</strong><small>IN CHROME · ARGON V2</small></div><span id="status" class="status">CHECKING</span></header>
   <main>
     <label for="prompt">WHAT SHOULD ARSEN HELP WITH?</label>
-    <textarea id="prompt" placeholder="Write an email, explain this, draft a reply..." maxlength="6000"></textarea>
+    <textarea id="prompt" placeholder="Try: open instagram, open youtube, open google, or ask a question..." maxlength="6000"></textarea>
     <button id="ask" class="primary">Ask ARSEN <span>↗</span></button>
     <p id="message" role="status">Connect to your local ARSEN server at http://localhost:3000.</p>
     <section id="answer-wrap" hidden>
       <label for="answer">ARSEN RESPONSE</label>
       <div id="answer" class="answer"></div>
-      <button id="insert" class="secondary">Insert into focused page field</button>
+      <button id="insert" class="secondary">Insert answer into focused text field</button>
       <small class="hint">Insertion happens only when you press this button. Review the text before using it.</small>
     </section>
   </main>
-  <footer>Local-first · Your provider key stays on the ARSEN server.</footer>
+  <footer>Local-first · Browser actions run only when you press Ask ARSEN.</footer>
   <script src="popup.js"></script>
 </body>
 </html>
