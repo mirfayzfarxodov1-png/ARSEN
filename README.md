@@ -51,6 +51,8 @@ A local knowledge base and a small local model do not know everything and can ma
 
 ## Chrome extension
 
+The extension supports explicit, user-clicked opening of these allowlisted sites: Instagram, YouTube, Google, Gmail, Roblox and GitHub. Type `open instagram` (or another listed site) and click **Ask ARSEN**. It opens a new tab. Other browser or computer actions are not enabled by this command handler.
+
 1. Start ARSEN with `npm start`.
 2. Open `chrome://extensions` and enable Developer mode.
 3. Choose **Load unpacked** and select the repository's `chrome-extension` folder (not the root ARSEN folder).
