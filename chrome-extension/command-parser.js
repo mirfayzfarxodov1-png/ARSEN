@@ -76,7 +76,7 @@ export function parseBrowserCommand(prompt) {
     /(?:obuna bo‘l|obuna bol|patpiska tash)/i.test(value);
   const mentionsInstagram = /instagram|\binsta\b|инстаграм/i.test(value);
 
-  if (mentionsInstagram && handle) {
+  if ((mentionsInstagram || wantsFollow) && handle) {
     return {
       kind: 'navigate',
       label: 'Instagram profile @' + handle,
