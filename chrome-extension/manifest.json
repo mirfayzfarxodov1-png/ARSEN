@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ARSEN in Chrome",
   "version": "1.1.0",
-  "description": "Local ARSEN assistant with user-triggered, allowlisted browser actions.",
+  "description": "Local ARSEN assistant with user-triggered website navigation and web search.",
   "permissions": [
     "activeTab",
     "scripting",
