@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "ARSEN in Chrome",
-  "version": "1.0.0",
-  "description": "Ask ARSEN for help and insert approved text into the current page.",
+  "version": "1.1.0",
+  "description": "Local ARSEN assistant with user-triggered, allowlisted browser actions.",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "tabs"
   ],
   "host_permissions": [
     "http://localhost:3000/*"
